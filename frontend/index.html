@@ -1,0 +1,1210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroWorld AI — World Intelligence Platform</title>
+
+<style>
+:root {
+  --bg: #060914;
+  --surface: #0d1324;
+  --surface2: #121b30;
+  --border: rgba(149,170,220,.14);
+  --text: #eef3ff;
+  --muted: #8796b5;
+  --accent: #6d7dff;
+  --cyan: #37d8ed;
+  --green: #4fe1ae;
+  --purple: #ae7cff;
+  --shadow: 0 20px 65px rgba(0,0,0,.25);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+}
+
+body.light {
+  --bg: #f3f6ff;
+  --surface: #ffffff;
+  --surface2: #edf1fc;
+  --border: #dce3f2;
+  --text: #17213b;
+  --muted: #66738e;
+  --shadow: 0 16px 45px rgba(48,65,110,.1);
+}
+
+button, a { font: inherit; }
+button { cursor: pointer; }
+a { text-decoration: none; color: inherit; }
+
+.app {
+  display: grid;
+  grid-template-columns: 252px minmax(0,1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 24px 15px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 6px 10px 28px;
+}
+
+.logo-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: linear-gradient(135deg,#636bff,#31d8e6);
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  box-shadow: 0 0 25px #636bff55;
+}
+
+.logo strong { font-size: 17px; }
+.logo small { display: block; color: var(--muted); margin-top: 3px; }
+
+.nav-title {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 1.7px;
+  margin: 24px 12px 9px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  border-radius: 11px;
+  color: var(--muted);
+  font-size: 13px;
+  transition: .2s;
+}
+
+.nav-link:hover, .nav-link.active {
+  color: var(--text);
+  background: linear-gradient(90deg,#6675ff22,transparent);
+}
+
+.nav-link.active {
+  border-left: 3px solid var(--accent);
+}
+
+.nav-link span:first-child {
+  width: 22px;
+  text-align: center;
+  font-size: 17px;
+}
+
+.main {
+  min-width: 0;
+  padding: 0 30px 40px;
+}
+
+.topbar {
+  height: 82px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  gap: 15px;
+}
+
+.search {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 12px;
+  width: min(350px, 100%);
+  outline: none;
+}
+
+.top-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.status {
+  color: var(--green);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  margin-right: 7px;
+  box-shadow: 0 0 12px var(--green);
+}
+
+.hero {
+  margin-top: 28px;
+  border: 1px solid var(--border);
+  border-radius: 23px;
+  min-height: 390px;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 75% 45%,#283b8966,transparent 46%),
+    radial-gradient(ellipse at 30% 100%,#622d8b44,transparent 50%),
+    #0a1021;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 58px 45px;
+  max-width: 630px;
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--cyan);
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: clamp(34px,4vw,58px);
+  letter-spacing: -2px;
+  line-height: 1.1;
+  margin: 0 0 18px;
+}
+
+.gradient {
+  background: linear-gradient(90deg,#92a0ff,#44e0e9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  color: #a4b3d2;
+  line-height: 1.8;
+  max-width: 460px;
+  font-size: 14px;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  padding: 13px 19px;
+  border-radius: 12px;
+  color: white;
+  background: #1a2441;
+  font-size: 13px;
+  font-weight: 700;
+  transition: transform .2s;
+}
+
+.btn:hover { transform: translateY(-2px); }
+
+.btn.primary {
+  border: none;
+  background: linear-gradient(110deg,#636bff,#36bde5);
+  box-shadow: 0 8px 24px #566bff44;
+}
+
+#neuralCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: .8;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 32px 0 17px;
+}
+
+.section-heading h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.section-heading small { color: var(--muted); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 15px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.stat-value {
+  font-size: 29px;
+  font-weight: 800;
+  margin: 15px 0 9px;
+  letter-spacing: -.8px;
+}
+
+.stat-footer {
+  font-size: 11px;
+  color: var(--green);
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 16px;
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  min-height: 195px;
+  transition: .2s;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  border-color: #7180ff77;
+}
+
+.feature-icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: #6578ff1e;
+  margin-bottom: 17px;
+}
+
+.feature h3 {
+  font-size: 15px;
+  margin: 0 0 9px;
+}
+
+.feature p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  flex: 1;
+  margin: 0 0 16px;
+}
+
+.feature .open {
+  font-size: 12px;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 16px;
+}
+
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.activity:last-child { border: 0; }
+
+.activity-icon {
+  width: 35px;
+  height: 35px;
+  background: var(--surface2);
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.activity strong {
+  font-size: 12px;
+  display: block;
+}
+
+.activity small {
+  color: var(--muted);
+  font-size: 11px;
+  display: block;
+  margin-top: 5px;
+}
+
+.activity time {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.progress-item { margin: 19px 0; }
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+
+.progress-top span:last-child { color: var(--muted); }
+
+.progress-track {
+  height: 7px;
+  background: var(--surface2);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg,#6c75ff,#40d5e9);
+  transition: width .6s;
+}
+
+.footer {
+  text-align: center;
+  padding: 30px 0 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.menu-btn { display: none; }
+
+.toast {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #1a2746;
+  border: 1px solid #748aff66;
+  color: white;
+  border-radius: 12px;
+  padding: 14px 20px;
+  z-index: 30;
+  box-shadow: var(--shadow);
+  display: none;
+  max-width: 320px;
+  font-size: 13px;
+}
+
+@media(max-width:1150px) {
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .feature-grid { grid-template-columns: repeat(2,1fr); }
+}
+
+@media(max-width:800px) {
+  .app { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: fixed;
+    z-index: 20;
+    width: 252px;
+    transform: translateX(-100%);
+    transition: transform .25s;
+  }
+
+  .sidebar.open { transform: translateX(0); }
+
+  .main { padding: 0 17px 30px; }
+  .menu-btn { display: block; }
+  .topbar { height: 70px; }
+  .hero-content { padding: 45px 25px; }
+  .bottom-grid { grid-template-columns: 1fr; }
+}
+
+@media(max-width:520px) {
+  .feature-grid { grid-template-columns: 1fr; }
+  .stats { gap: 10px; }
+  .card { padding: 15px; }
+  .stat-value { font-size: 23px; }
+  .status { display: none; }
+  .search { width: 100%; min-width: 0; }
+  .hero { min-height: 440px; }
+  .hero-content { padding: 45px 20px; }
+  .hero p { font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <div class="logo-mark">◈</div>
+    <div>
+      <strong>NeuroWorld AI</strong>
+      <small>World Intelligence</small>
+    </div>
+  </div>
+
+  <nav id="navigation"></nav>
+</aside>
+
+<main class="main">
+
+  <header class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0">
+      <button class="icon-btn menu-btn" id="menuButton" aria-label="Toggle menu">☰</button>
+      <input class="search" id="searchInput" placeholder="Search platform modules..." aria-label="Search modules">
+    </div>
+    <div class="top-actions">
+      <span class="status">Demo environment</span>
+      <button class="icon-btn" id="themeButton" title="Toggle theme">☀</button>
+      <a class="icon-btn" href="settings.html" title="Settings" style="display:grid;place-items:center">⚙</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <canvas id="neuralCanvas" aria-hidden="true"></canvas>
+
+    <div class="hero-content">
+      <span class="eyebrow">NEXT-GENERATION WORLD INTELLIGENCE</span>
+
+      <h1>
+        Imagine. Simulate.<br>
+        <span class="gradient">Understand Worlds.</span>
+      </h1>
+
+      <p>
+        Build intelligent world models, predict future states,
+        explore latent environments, train autonomous agents,
+        and simulate complex physical systems.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="world-lab.html" class="btn primary">◈ Launch World Lab →</a>
+        <a href="simulation.html" class="btn">▶ Open Simulation</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-heading">
+    <h2>Platform Overview</h2>
+    <small>Illustrative demo metrics</small>
+  </div>
+
+  <section class="stats">
+    <div class="card">
+      <div class="stat-label">Simulated Worlds</div>
+      <div class="stat-value" id="worldCount">12</div>
+      <div class="stat-footer">● Demo dataset</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label">Neural Models</div>
+      <div class="stat-value">08</div>
+      <div class="stat-footer">● Example configurations</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label">Prediction Accuracy</div>
+      <div class="stat-value" id="accuracy">94.2%</div>
+      <div class="stat-footer">● Sample metric only</div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label">Simulated FPS</div>
+      <div class="stat-value" id="fps">60</div>
+      <div class="stat-footer">● Animation estimate</div>
+    </div>
+  </section>
+
+  <div class="section-heading">
+    <h2>Explore AI Capabilities</h2>
+    <small>Core intelligence modules</small>
+  </div>
+
+  <section class="feature-grid" id="featureGrid"></section>
+
+  <div class="section-heading">
+    <h2>Research Workspace</h2>
+    <small>Demonstration status</small>
+  </div>
+
+  <section class="bottom-grid">
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">Recent Demo Activity</h3>
+      <div id="activityList"></div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 10px;font-size:15px">Model Readiness</h3>
+
+      <div class="progress-item">
+        <div class="progress-top">
+          <span>World Model</span><span>82%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:82%"></div>
+        </div>
+      </div>
+
+      <div class="progress-item">
+        <div class="progress-top">
+          <span>Video Prediction</span><span>68%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:68%"></div>
+        </div>
+      </div>
+
+      <div class="progress-item">
+        <div class="progress-top">
+          <span>Agent Planning</span><span>75%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:75%"></div>
+        </div>
+      </div>
+
+      <div class="progress-item">
+        <div class="progress-top">
+          <span>Physics Simulation</span><span>91%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:91%"></div>
+        </div>
+      </div>
+
+      <small style="color:var(--muted);font-size:11px">
+        These are placeholder values, not actual model evaluation results.
+      </small>
+    </div>
+
+  </section>
+
+  <div class="footer">
+    NeuroWorld AI © 2026 · Intelligent World Modeling Platform
+  </div>
+
+</main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+
+/* ==========================================================
+   Platform navigation
+========================================================== */
+
+const navigationGroups = [
+  {
+    title: "OVERVIEW",
+    pages: [
+      ["⌂", "Home", "index.html"],
+      ["▦", "Dashboard", "dashboard.html"]
+    ]
+  },
+  {
+    title: "WORLD EXPLORATION",
+    pages: [
+      ["◈", "World Lab", "world-lab.html"],
+      ["＋", "Create World", "create-world.html"],
+      ["◎", "Explore World", "explore-world.html"],
+      ["◉", "Live World", "live-world.html"]
+    ]
+  },
+  {
+    title: "NEURAL INTELLIGENCE",
+    pages: [
+      ["◇", "World Model", "world-model.html"],
+      ["▧", "Neural Models", "neural-models.html"],
+      ["⌘", "Model Architecture", "model-architecture.html"],
+      ["◌", "Latent Space", "latent-space.html"],
+      ["◍", "Latent Explorer", "latent-explorer.html"]
+    ]
+  },
+  {
+    title: "PERCEPTION",
+    pages: [
+      ["◉", "Perception", "perception.html"],
+      ["▣", "Video Understanding", "video-understanding.html"],
+      ["⊕", "Object Tracking", "object-tracking.html"],
+      ["▤", "Scene Understanding", "scene-understanding.html"]
+    ]
+  },
+  {
+    title: "IMAGINATION",
+    pages: [
+      ["✧", "Imagination", "imagination.html"],
+      ["♧", "Imagination Tree", "imagination-tree.html"],
+      ["↗", "Future Prediction", "future-prediction.html"],
+      ["⇄", "Counterfactual", "counterfactual.html"],
+      ["⬡", "Scenario Lab", "scenario-lab.html"]
+    ]
+  },
+  {
+    title: "PHYSICS & MEMORY",
+    pages: [
+      ["⚛", "Physics", "physics.html"],
+      ["↝", "Dynamics", "dynamics.html"],
+      ["▥", "Spatial Memory", "spatial-memory.html"],
+      ["◫", "World Memory", "world-memory.html"]
+    ]
+  },
+  {
+    title: "AUTONOMOUS AGENTS",
+    pages: [
+      ["♟", "Agent", "agent.html"],
+      ["⊞", "Agent Control", "agent-control.html"],
+      ["⇢", "Planning", "planning.html"],
+      ["⌁", "Trajectory Planner", "trajectory-planner.html"],
+      ["★", "Reward Model", "reward-model.html"],
+      ["⟳", "RL Training", "rl-training.html"]
+    ]
+  },
+  {
+    title: "SIMULATION",
+    pages: [
+      ["▶", "Simulation", "simulation.html"],
+      ["☷", "Simulation Control", "simulation-control.html"],
+      ["▱", "Environment Builder", "environment-builder.html"]
+    ]
+  },
+  {
+    title: "TRAINING & DATA",
+    pages: [
+      ["⚙", "Training", "training.html"],
+      ["▤", "Dataset", "dataset.html"],
+      ["◷", "Checkpoints", "checkpoints.html"],
+      ["⚗", "Experiments", "experiments.html"]
+    ]
+  },
+  {
+    title: "EVALUATION",
+    pages: [
+      ["✓", "Evaluation", "evaluation.html"],
+      ["▥", "Benchmarks", "benchmarks.html"],
+      ["⇋", "Model Comparison", "model-comparison.html"]
+    ]
+  },
+  {
+    title: "OPERATIONS",
+    pages: [
+      ["▥", "Monitoring", "monitoring.html"],
+      ["◫", "GPU Monitoring", "gpu-monitoring.html"],
+      ["▦", "Model Registry", "model-registry.html"],
+      ["⚙", "Settings", "settings.html"]
+    ]
+  }
+];
+
+const navigation = document.getElementById("navigation");
+
+function renderNavigation(query = "") {
+  navigation.replaceChildren();
+
+  let matchCount = 0;
+
+  navigationGroups.forEach(group => {
+    const matches = group.pages.filter(page =>
+      page[1].toLowerCase().includes(query.toLowerCase()) ||
+      group.title.toLowerCase().includes(query.toLowerCase())
+    );
+
+    if (!matches.length) return;
+
+    const heading = document.createElement("div");
+    heading.className = "nav-title";
+    heading.textContent = group.title;
+    navigation.appendChild(heading);
+
+    matches.forEach(([icon, name, url]) => {
+      const link = document.createElement("a");
+      link.className = "nav-link";
+      link.href = url;
+
+      if (url === "index.html") {
+        link.classList.add("active");
+      }
+
+      const symbol = document.createElement("span");
+      symbol.textContent = icon;
+
+      const text = document.createElement("span");
+      text.textContent = name;
+
+      link.append(symbol, text);
+      navigation.appendChild(link);
+      matchCount++;
+    });
+  });
+
+  if (!matchCount) {
+    const empty = document.createElement("p");
+    empty.style.padding = "15px";
+    empty.style.color = "var(--muted)";
+    empty.textContent = "No matching modules.";
+    navigation.appendChild(empty);
+  }
+}
+
+renderNavigation();
+
+document.getElementById("searchInput").addEventListener(
+  "input",
+  event => renderNavigation(event.target.value)
+);
+
+/* ==========================================================
+   Feature cards
+========================================================== */
+
+const features = [
+  {
+    icon: "◈",
+    title: "World Modeling",
+    description: "Learn latent world representations and predict how environments evolve over time.",
+    url: "world-model.html"
+  },
+  {
+    icon: "✧",
+    title: "Future Imagination",
+    description: "Explore possible future states, imagined trajectories, and counterfactual scenarios.",
+    url: "imagination.html"
+  },
+  {
+    icon: "⚛",
+    title: "Physics Intelligence",
+    description: "Explore dynamics, motion, object interactions, and physics-aware prediction.",
+    url: "physics.html"
+  },
+  {
+    icon: "♟",
+    title: "Autonomous Agents",
+    description: "Experiment with goal-directed planning, actions, and reward-driven policies.",
+    url: "agent.html"
+  },
+  {
+    icon: "◉",
+    title: "Visual Perception",
+    description: "Analyze video, track objects, and represent dynamic scenes.",
+    url: "perception.html"
+  },
+  {
+    icon: "▶",
+    title: "Simulation Engine",
+    description: "Create virtual environments and test world-model predictions.",
+    url: "simulation.html"
+  },
+  {
+    icon: "▥",
+    title: "Model Training",
+    description: "Manage datasets, training runs, experiments, and model checkpoints.",
+    url: "training.html"
+  },
+  {
+    icon: "✓",
+    title: "Evaluation Lab",
+    description: "Inspect prediction errors, benchmark results, and model comparisons.",
+    url: "evaluation.html"
+  },
+  {
+    icon: "▦",
+    title: "Model Registry",
+    description: "Organize trained models, versions, and deployment readiness.",
+    url: "model-registry.html"
+  }
+];
+
+const featureGrid = document.getElementById("featureGrid");
+
+features.forEach(feature => {
+  const card = document.createElement("a");
+  card.className = "card feature";
+  card.href = feature.url;
+
+  const icon = document.createElement("div");
+  icon.className = "feature-icon";
+  icon.textContent = feature.icon;
+
+  const title = document.createElement("h3");
+  title.textContent = feature.title;
+
+  const description = document.createElement("p");
+  description.textContent = feature.description;
+
+  const open = document.createElement("span");
+  open.className = "open";
+  open.textContent = "Explore Module →";
+
+  card.append(icon, title, description, open);
+  featureGrid.appendChild(card);
+});
+
+/* ==========================================================
+   Demo activity
+========================================================== */
+
+const activities = [
+  ["◈", "World model experiment configured", "Example training setup", "Demo"],
+  ["⚛", "Physics simulation initialized", "Example environment", "Demo"],
+  ["✧", "Future prediction generated", "Illustrative rollout", "Demo"],
+  ["▥", "Dataset validation completed", "Example validation event", "Demo"]
+];
+
+const activityList = document.getElementById("activityList");
+
+activities.forEach(([icon, title, detail, time]) => {
+  const item = document.createElement("div");
+  item.className = "activity";
+
+  const symbol = document.createElement("div");
+  symbol.className = "activity-icon";
+  symbol.textContent = icon;
+
+  const content = document.createElement("div");
+
+  const strong = document.createElement("strong");
+  strong.textContent = title;
+
+  const small = document.createElement("small");
+  small.textContent = detail;
+
+  content.append(strong, small);
+
+  const timestamp = document.createElement("time");
+  timestamp.textContent = time;
+
+  item.append(symbol, content, timestamp);
+  activityList.appendChild(item);
+});
+
+/* ==========================================================
+   Theme switching
+========================================================== */
+
+const themeButton = document.getElementById("themeButton");
+
+function applyTheme(theme) {
+  document.body.classList.toggle(
+    "light",
+    theme === "light"
+  );
+
+  themeButton.textContent = theme === "light" ? "☾" : "☀";
+
+  try {
+    localStorage.setItem("neuroworld-theme", theme);
+  } catch (_) {}
+}
+
+let savedTheme = "dark";
+
+try {
+  savedTheme = localStorage.getItem("neuroworld-theme") || "dark";
+} catch (_) {}
+
+applyTheme(savedTheme);
+
+themeButton.addEventListener("click", () => {
+  applyTheme(
+    document.body.classList.contains("light")
+      ? "dark"
+      : "light"
+  );
+});
+
+/* ==========================================================
+   Mobile navigation
+========================================================== */
+
+document.getElementById("menuButton").addEventListener(
+  "click",
+  () => document.getElementById("sidebar").classList.toggle("open")
+);
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    document.getElementById("sidebar").classList.remove("open");
+  }
+});
+
+/* ==========================================================
+   Animated neural network visualization
+========================================================== */
+
+const canvas = document.getElementById("neuralCanvas");
+const context = canvas.getContext("2d");
+
+let nodes = [];
+let animationFrame = 0;
+let animationId = null;
+
+function resizeCanvas() {
+  const bounds = canvas.getBoundingClientRect();
+
+  const ratio = Math.min(
+    window.devicePixelRatio || 1,
+    2
+  );
+
+  canvas.width = Math.max(1, Math.round(bounds.width * ratio));
+  canvas.height = Math.max(1, Math.round(bounds.height * ratio));
+
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+  const width = bounds.width;
+  const height = bounds.height;
+
+  nodes = Array.from({ length: 65 }, () => ({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    vx: (Math.random() - 0.5) * 0.35,
+    vy: (Math.random() - 0.5) * 0.35,
+    radius: Math.random() * 1.8 + 0.7
+  }));
+}
+
+function drawNeuralWorld() {
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+
+  context.clearRect(0, 0, width, height);
+
+  const centerX = width * 0.76;
+  const centerY = height * 0.5;
+
+  const radius = Math.min(
+    width * 0.23,
+    height * 0.38
+  );
+
+  const glow = context.createRadialGradient(
+    centerX, centerY, 0,
+    centerX, centerY, radius * 1.8
+  );
+
+  glow.addColorStop(0, "rgba(81,110,255,.23)");
+  glow.addColorStop(1, "rgba(81,110,255,0)");
+
+  context.fillStyle = glow;
+  context.beginPath();
+  context.arc(
+    centerX,
+    centerY,
+    radius * 1.8,
+    0,
+    Math.PI * 2
+  );
+  context.fill();
+
+  // Rotating wireframe globe.
+  for (let ring = 0; ring < 8; ring++) {
+    const angle = (
+      ring * Math.PI / 8
+      + animationFrame * 0.0015
+    );
+
+    context.save();
+    context.translate(centerX, centerY);
+    context.rotate(angle);
+
+    context.beginPath();
+    context.ellipse(
+      0,
+      0,
+      radius,
+      radius * 0.35,
+      0,
+      0,
+      Math.PI * 2
+    );
+
+    context.strokeStyle = "rgba(86,191,255,.22)";
+    context.lineWidth = 1;
+    context.stroke();
+    context.restore();
+  }
+
+  context.beginPath();
+  context.arc(
+    centerX,
+    centerY,
+    radius,
+    0,
+    Math.PI * 2
+  );
+  context.strokeStyle = "rgba(92,151,255,.35)";
+  context.stroke();
+
+  nodes.forEach((node, index) => {
+    node.x += node.vx;
+    node.y += node.vy;
+
+    if (node.x < 0 || node.x > width) node.vx *= -1;
+    if (node.y < 0 || node.y > height) node.vy *= -1;
+
+    for (let j = index + 1; j < nodes.length; j++) {
+      const other = nodes[j];
+
+      const dx = node.x - other.x;
+      const dy = node.y - other.y;
+
+      const distance = Math.hypot(dx, dy);
+
+      if (distance < 110) {
+        context.beginPath();
+        context.moveTo(node.x, node.y);
+        context.lineTo(other.x, other.y);
+
+        context.strokeStyle = `rgba(86,165,255,${(1 - distance / 110) * 0.17})`;
+        context.stroke();
+      }
+    }
+
+    context.beginPath();
+    context.arc(
+      node.x,
+      node.y,
+      node.radius,
+      0,
+      Math.PI * 2
+    );
+
+    context.fillStyle = "#78cfff";
+    context.fill();
+  });
+
+  animationFrame++;
+  animationId = requestAnimationFrame(drawNeuralWorld);
+}
+
+resizeCanvas();
+
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  drawNeuralWorld();
+} else {
+  drawNeuralWorld();
+  cancelAnimationFrame(animationId);
+}
+
+window.addEventListener("resize", resizeCanvas);
+
+/* ==========================================================
+   FPS display based on browser animation timing
+========================================================== */
+
+let frames = 0;
+let lastFpsTime = performance.now();
+
+function measureFps(now) {
+  frames++;
+
+  if (now - lastFpsTime >= 1000) {
+    const fps = Math.round(
+      frames * 1000 / (now - lastFpsTime)
+    );
+
+    document.getElementById("fps").textContent = fps;
+
+    frames = 0;
+    lastFpsTime = now;
+  }
+
+  requestAnimationFrame(measureFps);
+}
+
+requestAnimationFrame(measureFps);
+
+/* ==========================================================
+   Toast notifications
+========================================================== */
+
+let toastTimeout;
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  clearTimeout(toastTimeout);
+
+  toastTimeout = setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
+}
+
+/* ==========================================================
+   Keyboard shortcuts
+========================================================== */
+
+document.addEventListener("keydown", event => {
+  if (
+    (event.ctrlKey || event.metaKey)
+    && event.key.toLowerCase() === "k"
+  ) {
+    event.preventDefault();
+
+    document.getElementById("searchInput").focus();
+    showToast("Search NeuroWorld modules");
+  }
+});
+
+console.info("NeuroWorld AI frontend initialized.");
+</script>
+
+</body>
+</html>
