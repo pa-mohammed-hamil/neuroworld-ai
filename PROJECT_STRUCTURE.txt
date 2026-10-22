@@ -1,0 +1,527 @@
+neuroworld-ai/
+│
+├── README.md
+├── LICENSE
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+├── SECURITY.md
+├── CHANGELOG.md
+├── Makefile
+├── pyproject.toml
+├── requirements.txt
+├── requirements-dev.txt
+├── package.json
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+├── .dockerignore
+│
+├── docs/
+│ ├── architecture/
+│ │ ├── system_architecture.md
+│ │ ├── neural_architecture.md
+│ │ ├── world_model_architecture.md
+│ │ ├── latent_space_architecture.md
+│ │ ├── imagination_architecture.md
+│ │ ├── dynamics_architecture.md
+│ │ ├── planning_architecture.md
+│ │ ├── memory_architecture.md
+│ │ ├── simulation_architecture.md
+│ │ ├── training_architecture.md
+│ │ ├── evaluation_architecture.md
+│ │ └── deployment_architecture.md
+│ │
+│ ├── research/
+│ │ ├── world_models.md
+│ │ ├── latent_dynamics.md
+│ │ ├── video_prediction.md
+│ │ ├── counterfactual_reasoning.md
+│ │ ├── neural_simulation.md
+│ │ ├── model_based_rl.md
+│ │ └── continual_learning.md
+│ │
+│ ├── api/
+│ │ ├── rest_api.md
+│ │ ├── websocket_api.md
+│ │ └── inference_api.md
+│ │
+│ └── experiments/
+│ ├── experiment_design.md
+│ ├── benchmarks.md
+│ └── reproducibility.md
+│
+├── backend/
+│ └── app/
+│ ├── __init__.py
+│ ├── main.py
+│ ├── config.py
+│ ├── dependencies.py
+│ │
+│ ├── api/
+│ │ └── v1/
+│ │ ├── worlds.py
+│ │ ├── observations.py
+│ │ ├── actions.py
+│ │ ├── imagination.py
+│ │ ├── predictions.py
+│ │ ├── simulations.py
+│ │ ├── planning.py
+│ │ ├── agents.py
+│ │ ├── experiments.py
+│ │ ├── training.py
+│ │ ├── models.py
+│ │ ├── evaluation.py
+│ │ └── health.py
+│ │
+│ ├── core/
+│ │ ├── config.py
+│ │ ├── logging.py
+│ │ ├── exceptions.py
+│ │ ├── telemetry.py
+│ │ └── security.py
+│ │
+│ ├── services/
+│ │ ├── world_service.py
+│ │ ├── observation_service.py
+│ │ ├── imagination_service.py
+│ │ ├── prediction_service.py
+│ │ ├── simulation_service.py
+│ │ ├── planning_service.py
+│ │ ├── training_service.py
+│ │ └── evaluation_service.py
+│ │
+│ ├── streaming/
+│ │ ├── frame_stream.py
+│ │ ├── latent_stream.py
+│ │ ├── prediction_stream.py
+│ │ └── simulation_stream.py
+│ │
+│ ├── database/
+│ │ ├── session.py
+│ │ ├── models/
+│ │ │ ├── world.py
+│ │ │ ├── trajectory.py
+│ │ │ ├── experiment.py
+│ │ │ ├── checkpoint.py
+│ │ │ └── evaluation.py
+│ │ └── repositories/
+│ │
+│ └── workers/
+│ ├── inference_worker.py
+│ ├── imagination_worker.py
+│ ├── simulation_worker.py
+│ ├── training_worker.py
+│ └── evaluation_worker.py
+│
+├── neuroworld/
+│ │
+│ ├── perception/
+│ │ ├── image_encoder.py
+│ │ ├── video_encoder.py
+│ │ ├── vision_transformer.py
+│ │ ├── depth_estimator.py
+│ │ ├── optical_flow.py
+│ │ ├── object_encoder.py
+│ │ ├── scene_encoder.py
+│ │ ├── motion_encoder.py
+│ │ └── multimodal_encoder.py
+│ │
+│ ├── tokenizer/
+│ │ ├── spatial_tokenizer.py
+│ │ ├── temporal_tokenizer.py
+│ │ ├── video_tokenizer.py
+│ │ ├── action_tokenizer.py
+│ │ ├── vqvae.py
+│ │ └── codebook.py
+│ │
+│ ├── latent/
+│ │ ├── encoder.py
+│ │ ├── decoder.py
+│ │ ├── latent_space.py
+│ │ ├── state_representation.py
+│ │ ├── state_compressor.py
+│ │ └── latent_regularizer.py
+│ │
+│ ├── world_model/
+│ │ ├── world_model.py
+│ │ ├── transformer_world_model.py
+│ │ ├── diffusion_world_model.py
+│ │ ├── autoregressive_world_model.py
+│ │ ├── action_conditioned_model.py
+│ │ └── world_state.py
+│ │
+│ ├── dynamics/
+│ │ ├── dynamics_model.py
+│ │ ├── transformer_dynamics.py
+│ │ ├── latent_dynamics.py
+│ │ ├── recurrent_dynamics.py
+│ │ ├── stochastic_dynamics.py
+│ │ ├── deterministic_dynamics.py
+│ │ └── transition_model.py
+│ │
+│ ├── physics/
+│ │ ├── physics_encoder.py
+│ │ ├── gravity_model.py
+│ │ ├── collision_model.py
+│ │ ├── motion_model.py
+│ │ ├── object_dynamics.py
+│ │ ├── interaction_model.py
+│ │ └── physical_consistency.py
+│ │
+│ ├── prediction/
+│ │ ├── next_state.py
+│ │ ├── future_state.py
+│ │ ├── frame_prediction.py
+│ │ ├── trajectory_prediction.py
+│ │ ├── event_prediction.py
+│ │ └── uncertainty.py
+│ │
+│ ├── imagination/
+│ │ ├── imagination_engine.py
+│ │ ├── rollout.py
+│ │ ├── latent_rollout.py
+│ │ ├── trajectory_generator.py
+│ │ ├── future_generator.py
+│ │ ├── branch_generator.py
+│ │ ├── counterfactual.py
+│ │ ├── scenario_generator.py
+│ │ └── imagination_memory.py
+│ │
+│ ├── planning/
+│ │ ├── planner.py
+│ │ ├── latent_planner.py
+│ │ ├── trajectory_planner.py
+│ │ ├── mpc.py
+│ │ ├── cem.py
+│ │ ├── tree_search.py
+│ │ ├── goal_conditioned.py
+│ │ └── plan_evaluator.py
+│ │
+│ ├── agents/
+│ │ ├── world_agent.py
+│ │ ├── exploration_agent.py
+│ │ ├── planning_agent.py
+│ │ ├── imagination_agent.py
+│ │ ├── navigation_agent.py
+│ │ ├── curiosity_agent.py
+│ │ └── evaluation_agent.py
+│ │
+│ ├── rl/
+│ │ ├── policy.py
+│ │ ├── actor.py
+│ │ ├── critic.py
+│ │ ├── reward_model.py
+│ │ ├── intrinsic_reward.py
+│ │ ├── model_based_rl.py
+│ │ ├── imagined_replay.py
+│ │ └── policy_optimizer.py
+│ │
+│ ├── memory/
+│ │ ├── episodic_memory.py
+│ │ ├── spatial_memory.py
+│ │ ├── temporal_memory.py
+│ │ ├── object_memory.py
+│ │ ├── trajectory_memory.py
+│ │ └── retrieval.py
+│ │
+│ ├── spatial/
+│ │ ├── scene_graph.py
+│ │ ├── object_graph.py
+│ │ ├── spatial_map.py
+│ │ ├── occupancy_map.py
+│ │ ├── coordinates.py
+│ │ └── spatial_reasoning.py
+│ │
+│ ├── causal/
+│ │ ├── causal_model.py
+│ │ ├── intervention.py
+│ │ ├── counterfactual_reasoner.py
+│ │ └── causal_graph.py
+│ │
+│ └── uncertainty/
+│ ├── epistemic.py
+│ ├── aleatoric.py
+│ ├── ensemble.py
+│ ├── calibration.py
+│ └── confidence.py
+│
+├── simulation/
+│ ├── environment.py
+│ ├── simulator.py
+│ ├── world_runner.py
+│ ├── action_space.py
+│ ├── observation_space.py
+│ ├── scenario.py
+│ ├── renderer.py
+│ │
+│ ├── environments/
+│ │ ├── navigation/
+│ │ ├── manipulation/
+│ │ ├── driving/
+│ │ ├── indoor/
+│ │ ├── outdoor/
+│ │ └── synthetic_physics/
+│ │
+│ └── scenarios/
+│ ├── object_push.py
+│ ├── collision.py
+│ ├── navigation.py
+│ ├── obstacle_avoidance.py
+│ └── object_interaction.py
+│
+├── training/
+│ ├── train_world_model.py
+│ ├── train_tokenizer.py
+│ ├── train_dynamics.py
+│ ├── train_video_prediction.py
+│ ├── train_reward_model.py
+│ ├── train_policy.py
+│ ├── train_joint.py
+│ │
+│ ├── datasets/
+│ │ ├── video_dataset.py
+│ │ ├── trajectory_dataset.py
+│ │ ├── action_dataset.py
+│ │ ├── simulation_dataset.py
+│ │ └── augmentation.py
+│ │
+│ ├── losses/
+│ │ ├── reconstruction.py
+│ │ ├── prediction.py
+│ │ ├── temporal.py
+│ │ ├── contrastive.py
+│ │ ├── dynamics.py
+│ │ ├── physics.py
+│ │ └── consistency.py
+│ │
+│ ├── optimizers/
+│ ├── schedulers/
+│ ├── distributed/
+│ └── configs/
+│
+├── evaluation/
+│ ├── world_consistency.py
+│ ├── temporal_consistency.py
+│ ├── physical_consistency.py
+│ ├── object_permanence.py
+│ ├── action_controllability.py
+│ ├── trajectory_accuracy.py
+│ ├── future_prediction.py
+│ ├── counterfactual_accuracy.py
+│ ├── planning_success.py
+│ ├── calibration.py
+│ ├── robustness.py
+│ ├── generalization.py
+│ └── benchmark_runner.py
+│
+├── experiments/
+│ ├── configs/
+│ ├── notebooks/
+│ ├── ablations/
+│ ├── world_prediction/
+│ ├── imagination/
+│ ├── planning/
+│ ├── physics/
+│ ├── generalization/
+│ └── reports/
+│
+├── frontend/
+│ ├── index.html
+│ ├── dashboard.html
+│ │
+│ ├── world-lab.html
+│ ├── create-world.html
+│ ├── explore-world.html
+│ ├── live-world.html
+│ │
+│ ├── world-model.html
+│ ├── neural-models.html
+│ ├── model-architecture.html
+│ ├── latent-space.html
+│ ├── latent-explorer.html
+│ │
+│ ├── perception.html
+│ ├── video-understanding.html
+│ ├── object-tracking.html
+│ ├── scene-understanding.html
+│ │
+│ ├── imagination.html
+│ ├── imagination-tree.html
+│ ├── future-prediction.html
+│ ├── counterfactual.html
+│ ├── scenario-lab.html
+│ │
+│ ├── physics.html
+│ ├── dynamics.html
+│ ├── spatial-memory.html
+│ ├── world-memory.html
+│ │
+│ ├── agent.html
+│ ├── agent-control.html
+│ ├── planning.html
+│ ├── trajectory-planner.html
+│ ├── reward-model.html
+│ ├── rl-training.html
+│ │
+│ ├── simulation.html
+│ ├── simulation-control.html
+│ ├── environment-builder.html
+│ │
+│ ├── training.html
+│ ├── dataset.html
+│ ├── checkpoints.html
+│ ├── experiments.html
+│ │
+│ ├── evaluation.html
+│ ├── benchmarks.html
+│ ├── model-comparison.html
+│ │
+│ ├── monitoring.html
+│ ├── gpu-monitoring.html
+│ ├── model-registry.html
+│ └── settings.html
+│
+│ ├── css/
+│ │ ├── reset.css
+│ │ ├── variables.css
+│ │ ├── main.css
+│ │ ├── layout.css
+│ │ ├── dashboard.css
+│ │ ├── world.css
+│ │ ├── neural.css
+│ │ ├── latent.css
+│ │ ├── imagination.css
+│ │ ├── simulation.css
+│ │ ├── training.css
+│ │ ├── evaluation.css
+│ │ └── responsive.css
+│ │
+│ └── js/
+│ ├── api.js
+│ ├── websocket.js
+│ ├── dashboard.js
+│ ├── world.js
+│ ├── world-renderer.js
+│ ├── latent-visualizer.js
+│ ├── imagination.js
+│ ├── imagination-tree.js
+│ ├── trajectory.js
+│ ├── simulation.js
+│ ├── training.js
+│ ├── charts.js
+│ └── evaluation.js
+│
+├── data/
+│ ├── raw/
+│ │ ├── videos/
+│ │ ├── images/
+│ │ └── trajectories/
+│ ├── processed/
+│ ├── actions/
+│ ├── environments/
+│ ├── simulations/
+│ ├── latent_states/
+│ └── demo/
+│
+├── models/
+│ ├── tokenizer/
+│ ├── encoders/
+│ ├── world_model/
+│ ├── dynamics/
+│ ├── reward/
+│ ├── policy/
+│ └── checkpoints/
+│
+├── mlops/
+│ ├── model_registry.py
+│ ├── experiment_tracker.py
+│ ├── checkpoint_manager.py
+│ ├── data_versioning.py
+│ ├── model_versioning.py
+│ ├── drift_detection.py
+│ └── inference_monitor.py
+│
+├── infrastructure/
+│ ├── docker/
+│ │ ├── backend.Dockerfile
+│ │ ├── frontend.Dockerfile
+│ │ ├── training.Dockerfile
+│ │ └── gpu-worker.Dockerfile
+│ │
+│ ├── kubernetes/
+│ │ ├── namespace.yaml
+│ │ ├── backend.yaml
+│ │ ├── frontend.yaml
+│ │ ├── inference.yaml
+│ │ ├── training-workers.yaml
+│ │ ├── gpu-workers.yaml
+│ │ ├── redis.yaml
+│ │ ├── postgres.yaml
+│ │ ├── ingress.yaml
+│ │ └── autoscaling.yaml
+│ │
+│ ├── terraform/
+│ │ ├── main.tf
+│ │ ├── providers.tf
+│ │ ├── variables.tf
+│ │ ├── networking.tf
+│ │ ├── compute.tf
+│ │ ├── gpu.tf
+│ │ ├── database.tf
+│ │ ├── storage.tf
+│ │ └── monitoring.tf
+│ │
+│ └── monitoring/
+│ ├── prometheus.yml
+│ └── grafana/
+│ ├── world-model.json
+│ ├── inference.json
+│ ├── training.json
+│ ├── gpu.json
+│ └── evaluation.json
+│
+├── scripts/
+│ ├── setup_dev.sh
+│ ├── bootstrap.sh
+│ ├── run_local.sh
+│ ├── download_datasets.py
+│ ├── preprocess_videos.py
+│ ├── build_trajectories.py
+│ ├── train_tokenizer.py
+│ ├── train_world_model.py
+│ ├── run_simulation.py
+│ ├── run_imagination.py
+│ ├── run_benchmarks.py
+│ └── health_check.py
+│
+├── tests/
+│ ├── unit/
+│ ├── integration/
+│ ├── e2e/
+│ ├── perception/
+│ ├── tokenizer/
+│ ├── world_model/
+│ ├── dynamics/
+│ ├── physics/
+│ ├── prediction/
+│ ├── imagination/
+│ ├── planning/
+│ ├── agents/
+│ ├── rl/
+│ ├── simulation/
+│ ├── training/
+│ └── evaluation/
+│
+└── .github/
+├── ISSUE_TEMPLATE/
+├── pull_request_template.md
+└── workflows/
+├── ci.yml
+├── tests.yml
+├── lint.yml
+├── security.yml
+├── world-model-evaluation.yml
+├── simulation-tests.yml
+├── docker.yml
+└── deploy.yml
