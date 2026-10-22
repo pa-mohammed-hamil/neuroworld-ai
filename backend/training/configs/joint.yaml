@@ -1,0 +1,67 @@
+
+# NeuroWorld AI - Joint Training Configuration
+# File: training/configs/joint.yaml
+
+experiment:
+  name: "joint_training"
+  seed: 42
+
+model:
+  name: "NeuroWorldJointModel"
+  state_dim: 128
+  action_dim: 32
+  hidden_dim: 256
+
+  dynamics:
+    enabled: true
+    predict_next_state: true
+
+  reward:
+    enabled: true
+    predict_reward: true
+
+dataset:
+  path: "data/processed/transitions.npz"
+  num_workers: 0
+  shuffle: true
+
+training:
+  epochs: 50
+  batch_size: 32
+  device: "auto"
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+loss:
+  dynamics_weight: 1.0
+  reward_weight: 0.5
+  reduction: "mean"
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/joint"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/joint"
+
+distributed:
+  enabled: false
