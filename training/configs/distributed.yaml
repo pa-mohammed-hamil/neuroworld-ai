@@ -1,0 +1,461 @@
+
+# ============================================================
+# NeuroWorld AI - Distributed Training Configuration
+# File: training/configs/distributed.yaml
+# Framework: PyTorch 2.x
+# ============================================================
+
+project:
+  name: "NeuroWorld AI"
+  environment: "development"
+
+experiment:
+  name: "neuroworld_distributed"
+  run_name: "world_model_multi_gpu"
+  resume: false
+  resume_checkpoint: null
+
+# ============================================================
+# Distributed Training
+# ============================================================
+
+distributed:
+  enabled: true
+
+  # ddp | fsdp
+  strategy: "ddp"
+
+  # auto | nccl | gloo
+  backend: "auto"
+
+  init_method: "env://"
+
+  # Resolved from torchrun environment variables.
+  # Do not hardcode rank values for multi-node jobs.
+  world_size: null
+  rank: null
+  local_rank: null
+
+  timeout_seconds: 1800
+
+  find_unused_parameters: false
+  broadcast_buffers: true
+  gradient_as_bucket_view: true
+  static_graph: false
+
+  sync_batchnorm: false
+
+  barrier_on_start: true
+  barrier_on_finish: true
+
+  destroy_process_group_on_exit: true
+
+# ============================================================
+# Multi-GPU Configuration
+# ============================================================
+
+hardware:
+  device: "auto"
+  accelerator: "cuda"
+
+  # Number of GPUs per node, passed to torchrun.
+  gpus_per_node: 2
+
+  num_nodes: 1
+
+  # Set by the distributed launcher.
+  node_rank: null
+
+  master_addr: "127.0.0.1"
+  master_port: 29500
+
+  allow_tf32: true
+
+  cudnn_benchmark: true
+  deterministic: false
+
+  memory:
+    max_gpu_memory_fraction: 0.90
+    empty_cache_after_epoch: false
+
+# ============================================================
+# DDP Configuration
+# ============================================================
+
+ddp:
+  enabled: true
+
+  find_unused_parameters: false
+  broadcast_buffers: true
+
+  bucket_cap_mb: 25
+
+  gradient_as_bucket_view: true
+  static_graph: false
+
+  communication:
+    backend: "nccl"
+    async_error_handling: true
+
+  join:
+    enabled: false
+    throw_on_early_termination: true
+
+# ============================================================
+# FSDP Configuration
+# ============================================================
+
+fsdp:
+  enabled: false
+
+  # full_shard | shard_grad_op | no_shard | hybrid_shard
+  sharding_strategy: "full_shard"
+
+  # full | mixed | bf16
+  mixed_precision: "bf16"
+
+  auto_wrap_policy:
+    enabled: true
+    type: "transformer"
+    min_num_params: 1000000
+
+    transformer_layer_classes:
+      - "TransformerEncoderLayer"
+      - "TransformerDecoderLayer"
+
+  cpu_offload:
+    enabled: false
+    offload_params: false
+
+  activation_checkpointing:
+    enabled: false
+
+  forward_prefetch: false
+  backward_prefetch: "backward_pre"
+
+  limit_all_gathers: true
+  use_orig_params: true
+  sync_module_states: false
+
+  state_dict:
+    type: "sharded"
+    offload_to_cpu: true
+
+# ============================================================
+# Training
+# ============================================================
+
+training:
+  epochs: 100
+
+  # Per-GPU batch size, not global batch size.
+  batch_size_per_gpu: 8
+
+  gradient_accumulation_steps: 4
+
+  # With 2 GPUs: 8 * 4 * 2 = 64 effective samples.
+  effective_batch_size: 64
+
+  max_steps: null
+
+  gradient_checkpointing: false
+
+  gradient_clipping:
+    enabled: true
+    max_norm: 1.0
+    norm_type: 2.0
+
+  detect_anomaly: false
+
+  skip_non_finite_gradients: true
+
+  validate_every_n_epochs: 1
+
+  log_every_n_steps: 10
+
+# ============================================================
+# Mixed Precision
+# ============================================================
+
+mixed_precision:
+  enabled: true
+
+  # fp32 | fp16 | bf16
+  dtype: "bf16"
+
+  autocast: true
+
+  # Gradient scaling is generally needed for fp16,
+  # not bf16.
+  gradient_scaler:
+    enabled: false
+    init_scale: 65536.0
+    growth_factor: 2.0
+    backoff_factor: 0.5
+    growth_interval: 2000
+
+# ============================================================
+# Distributed Data Loading
+# ============================================================
+
+dataloader:
+  use_distributed_sampler: true
+
+  shuffle: true
+
+  num_workers_per_gpu: 4
+
+  pin_memory: true
+  persistent_workers: true
+
+  prefetch_factor: 2
+
+  drop_last: true
+
+  worker_seed: 42
+
+  sampler:
+    shuffle: true
+    seed: 42
+    drop_last: true
+
+  validation:
+    shuffle: false
+    drop_last: false
+
+  set_sampler_epoch: true
+
+# ============================================================
+# Optimizer
+# ============================================================
+
+optimizer:
+  name: "adamw"
+
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+
+  fused: false
+  foreach: null
+
+  zero_redundancy_optimizer:
+    enabled: false
+
+# ============================================================
+# Scheduler
+# ============================================================
+
+scheduler:
+  enabled: true
+
+  name: "cosine"
+
+  interval: "epoch"
+
+  warmup_epochs: 5
+
+  cosine:
+    t_max: 100
+    eta_min: 1.0e-6
+
+# ============================================================
+# Checkpointing
+# ============================================================
+
+checkpoint:
+  enabled: true
+
+  directory: "checkpoints/distributed"
+
+  filename_prefix: "neuroworld_ddp"
+
+  monitor: "val_loss"
+  mode: "min"
+
+  save_every_n_epochs: 5
+  save_best: true
+  save_last: true
+
+  max_checkpoints: 5
+
+  save_optimizer: true
+  save_scheduler: true
+  save_scaler: true
+  save_rng_state: true
+
+  rank_zero_only: true
+
+  # DDP: ordinary rank-zero torch.save.
+  # FSDP: requires distributed checkpoint handling.
+  format: "torch"
+
+  resume:
+    enabled: false
+    path: null
+    restore_optimizer: true
+    restore_scheduler: true
+    restore_rng_state: true
+
+# ============================================================
+# Validation
+# ============================================================
+
+validation:
+  enabled: true
+
+  validate_every_n_epochs: 1
+
+  sync_distributed: true
+
+  # All ranks must participate in metric reductions.
+  reduce_metrics: true
+
+  monitor: "val_loss"
+  mode: "min"
+
+  use_amp: true
+  amp_dtype: "bfloat16"
+
+  fail_on_non_finite: true
+
+  save_reports: true
+  report_dir: "reports/distributed_validation"
+
+# ============================================================
+# Early Stopping
+# ============================================================
+
+early_stopping:
+  enabled: true
+
+  monitor: "val_loss"
+  mode: "min"
+
+  patience: 10
+  min_delta: 0.0001
+
+  warmup_epochs: 5
+
+  # Stop decisions must be synchronized.
+  broadcast_stop_signal: true
+
+  restore_best_weights: true
+
+# ============================================================
+# Logging and Monitoring
+# ============================================================
+
+logging:
+  enabled: true
+
+  log_dir: "logs/distributed"
+
+  experiment_name: "neuroworld_distributed"
+
+  console_logging: true
+  jsonl_logging: true
+  csv_logging: true
+  tensorboard_logging: true
+
+  rank_zero_only: true
+
+  log_every_n_steps: 10
+  log_every_n_epochs: 1
+
+  log_learning_rate: true
+  log_gradient_norm: true
+
+  log_system_metrics: true
+  log_gpu_memory: true
+
+  monitor: "val_loss"
+  mode: "min"
+
+  append_existing: true
+  flush_every_write: true
+
+# ============================================================
+# Communication
+# ============================================================
+
+communication:
+  backend: "nccl"
+
+  nccl:
+    debug: "WARN"
+    socket_ifname: null
+    ib_disable: false
+    p2p_disable: false
+
+  timeout_seconds: 1800
+
+  monitored_barrier:
+    enabled: false
+    timeout_seconds: 300
+
+# ============================================================
+# Fault Tolerance
+# ============================================================
+
+fault_tolerance:
+  enabled: true
+
+  max_restarts: 3
+
+  save_on_exception: true
+
+  detect_non_finite_loss: true
+
+  fail_fast: true
+
+  elastic_training:
+    enabled: false
+    min_nodes: 1
+    max_nodes: 1
+
+  recovery:
+    resume_from_latest_checkpoint: true
+    restore_training_state: true
+
+# ============================================================
+# Security
+# ============================================================
+
+security:
+  trusted_checkpoints_only: true
+
+  verify_checkpoint_integrity: true
+
+  allow_untrusted_pickle: false
+
+  restrict_checkpoint_directory: true
+
+  redact_secrets_in_logs: true
+
+# ============================================================
+# Reproducibility
+# ============================================================
+
+reproducibility:
+  seed: 42
+
+  seed_per_rank: true
+  seed_workers: true
+
+  deterministic_algorithms: false
+
+  save_rng_state: true
+
+# ============================================================
+# Output Directories
+# ============================================================
+
+paths:
+  checkpoints: "checkpoints/distributed"
+  logs: "logs/distributed"
+  reports: "reports/distributed"
+  artifacts: "artifacts/distributed"
+  models: "models/distributed"

@@ -1,0 +1,477 @@
+
+# ============================================================
+# NeuroWorld AI - Base Training Configuration
+# File: training/configs/base.yaml
+# ============================================================
+
+project:
+  name: "NeuroWorld AI"
+  version: "1.0.0"
+  environment: "development"
+  description: "World Model and Physical AI Training Platform"
+
+experiment:
+  name: "neuroworld_base"
+  run_name: null
+  description: "Base training experiment"
+  tags:
+    - world-model
+    - pytorch
+    - physical-ai
+  resume: false
+  resume_checkpoint: null
+
+# ============================================================
+# Reproducibility
+# ============================================================
+
+seed: 42
+
+reproducibility:
+  deterministic: false
+  benchmark: true
+  seed_workers: true
+
+# ============================================================
+# Hardware and Device
+# ============================================================
+
+device:
+  type: "auto"                 # auto | cpu | cuda | mps
+  gpu_ids: [0]
+  allow_tf32: true
+  channels_last: false
+  empty_cache_after_epoch: false
+
+# ============================================================
+# Model
+# ============================================================
+
+model:
+  name: "neuroworld_base"
+  type: "world_model"
+  pretrained: false
+  pretrained_path: null
+
+  architecture:
+    latent_dim: 128
+    action_dim: 32
+    hidden_dim: 256
+    num_layers: 4
+    num_attention_heads: 8
+    dropout: 0.1
+    activation: "gelu"
+    normalization: "layernorm"
+    residual_connections: true
+
+  dynamics:
+    backend: "stochastic"
+    stochastic: true
+    distribution: "gaussian"
+    min_logvar: -10.0
+    max_logvar: 5.0
+    temperature: 1.0
+
+  tokenizer:
+    type: "vqvae"
+    codebook_size: 1024
+    embedding_dim: 128
+    commitment_weight: 0.25
+
+  prediction:
+    context_length: 16
+    prediction_horizon: 8
+    autoregressive: true
+    teacher_forcing_ratio: 1.0
+
+# ============================================================
+# Dataset
+# ============================================================
+
+dataset:
+  name: "neuroworld_dataset"
+  type: "trajectory"
+
+  root_dir: "data/processed"
+  train_path: "data/processed/train"
+  val_path: "data/processed/val"
+  test_path: "data/processed/test"
+
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+  shuffle: true
+  drop_last: false
+  pin_memory: true
+  persistent_workers: false
+
+  num_workers: 0
+  prefetch_factor: null
+
+  sequence_length: 16
+  stride: 1
+
+  image:
+    width: 128
+    height: 128
+    channels: 3
+    normalize: true
+    pixel_range: [0.0, 1.0]
+
+  augmentation:
+    enabled: true
+    horizontal_flip: false
+    random_crop: false
+    color_jitter: false
+    gaussian_noise: 0.01
+    temporal_jitter: false
+
+# ============================================================
+# Training
+# ============================================================
+
+training:
+  enabled: true
+  epochs: 100
+  batch_size: 32
+
+  gradient_accumulation_steps: 1
+  max_steps: null
+
+  precision: "fp32"            # fp32 | fp16 | bf16
+  mixed_precision: false
+
+  compile_model: false
+  compile_mode: "default"
+
+  gradient_checkpointing: false
+  anomaly_detection: false
+
+  log_every_n_steps: 10
+  validate_every_n_epochs: 1
+
+  max_train_batches: null
+  max_val_batches: null
+
+  save_final_model: true
+
+# ============================================================
+# Optimizer
+# ============================================================
+
+optimizer:
+  name: "adamw"
+
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+  betas: [0.9, 0.999]
+  eps: 1.0e-8
+
+  momentum: 0.9
+  nesterov: false
+
+  gradient_clipping:
+    enabled: true
+    method: "norm"
+    max_norm: 1.0
+    norm_type: 2.0
+
+# ============================================================
+# Learning Rate Scheduler
+# ============================================================
+
+scheduler:
+  enabled: true
+  name: "cosine"
+
+  interval: "epoch"            # epoch | step
+
+  warmup_epochs: 5
+  warmup_steps: 0
+
+  min_learning_rate: 1.0e-6
+  max_learning_rate: 0.0003
+
+  cosine:
+    t_max: 100
+    eta_min: 1.0e-6
+
+  one_cycle:
+    pct_start: 0.3
+    div_factor: 25.0
+    final_div_factor: 10000.0
+
+  plateau:
+    mode: "min"
+    factor: 0.5
+    patience: 5
+    threshold: 0.0001
+
+# ============================================================
+# Loss Functions
+# ============================================================
+
+loss:
+  primary: "mse"
+  reduction: "mean"
+
+  weights:
+    reconstruction: 1.0
+    prediction: 1.0
+    temporal: 0.1
+    contrastive: 0.1
+    dynamics: 1.0
+    physics: 0.1
+    consistency: 0.1
+    reward: 0.5
+    policy: 0.5
+    kl_divergence: 0.001
+
+  reconstruction:
+    type: "mse"
+
+  prediction:
+    type: "mse"
+
+  contrastive:
+    temperature: 0.07
+
+  kl_divergence:
+    free_bits: 0.0
+    beta: 0.001
+
+# ============================================================
+# Validation
+# ============================================================
+
+validation:
+  enabled: true
+  validate_every_n_epochs: 1
+  validate_every_n_steps: null
+
+  max_validation_batches: null
+
+  device: "auto"
+  use_amp: false
+  amp_dtype: "float16"
+
+  monitor: "val_loss"
+  mode: "min"
+
+  sync_distributed: true
+  fail_on_non_finite: true
+
+  save_reports: true
+  report_dir: "reports/validation"
+
+  metrics:
+    - val_loss
+    - mse
+    - rmse
+    - mae
+
+  verbose: true
+
+# ============================================================
+# Early Stopping
+# ============================================================
+
+early_stopping:
+  enabled: true
+  monitor: "val_loss"
+  mode: "min"
+
+  patience: 10
+  min_delta: 0.0001
+  min_delta_mode: "absolute"
+
+  warmup_epochs: 5
+  baseline: null
+
+  stop_on_nan: true
+  strict: true
+  verbose: true
+
+  restore_best_weights: true
+
+# ============================================================
+# Checkpoint Callback
+# ============================================================
+
+checkpoint:
+  enabled: true
+  directory: "checkpoints/neuroworld"
+
+  monitor: "val_loss"
+  mode: "min"
+
+  save_every_n_epochs: 5
+  save_best: true
+  save_last: true
+
+  max_checkpoints: 5
+  filename_prefix: "neuroworld"
+
+  save_optimizer: true
+  save_scheduler: true
+  save_scaler: true
+  save_rng_state: true
+
+  rank_zero_only: true
+  verbose: true
+
+# ============================================================
+# Logging
+# ============================================================
+
+logging:
+  enabled: true
+  log_dir: "logs/training"
+  experiment_name: "neuroworld_base"
+
+  log_every_n_steps: 10
+  log_every_n_epochs: 1
+
+  console_logging: true
+  jsonl_logging: true
+  csv_logging: true
+  tensorboard_logging: true
+
+  log_learning_rate: true
+  log_gradient_norm: false
+  log_system_metrics: true
+  log_gpu_memory: true
+
+  rank_zero_only: true
+
+  monitor: "val_loss"
+  mode: "min"
+
+  append_existing: true
+  flush_every_write: true
+
+# ============================================================
+# Distributed Training
+# ============================================================
+
+distributed:
+  enabled: false
+  strategy: "ddp"              # ddp | fsdp
+  backend: "auto"              # auto | nccl | gloo
+
+  world_size: 1
+  rank: 0
+  local_rank: 0
+
+  init_method: "env://"
+  find_unused_parameters: false
+  broadcast_buffers: true
+
+  fsdp:
+    sharding_strategy: "full_shard"
+    cpu_offload: false
+    activation_checkpointing: false
+    sync_module_states: false
+
+# ============================================================
+# Evaluation
+# ============================================================
+
+evaluation:
+  enabled: true
+  run_after_training: true
+
+  prediction:
+    enabled: true
+    metrics:
+      - mse
+      - rmse
+      - mae
+
+  reconstruction:
+    enabled: false
+    metrics:
+      - mse
+      - psnr
+      - ssim
+
+  temporal:
+    enabled: true
+    metrics:
+      - temporal_consistency
+      - velocity_error
+      - acceleration_error
+
+  physics:
+    enabled: false
+    check_collisions: true
+    check_boundaries: true
+
+  robustness:
+    enabled: false
+    noise_levels: [0.0, 0.01, 0.05, 0.1]
+
+# ============================================================
+# Experiment Tracking
+# ============================================================
+
+tracking:
+  enabled: true
+  backend: "local"             # local | mlflow
+
+  mlflow:
+    tracking_uri: "file:./mlruns"
+    experiment_name: "NeuroWorld AI"
+
+  record_hyperparameters: true
+  record_metrics: true
+  record_artifacts: true
+
+# ============================================================
+# Output Paths
+# ============================================================
+
+paths:
+  project_root: "."
+  data_dir: "data"
+  model_dir: "models"
+  checkpoint_dir: "checkpoints"
+  log_dir: "logs"
+  report_dir: "reports"
+  artifact_dir: "artifacts"
+
+# ============================================================
+# Safety and Resource Limits
+# ============================================================
+
+safety:
+  detect_non_finite_loss: true
+  stop_on_non_finite_loss: true
+
+  max_gradient_norm: 1.0
+
+  max_gpu_memory_fraction: 0.9
+
+  max_training_hours: null
+
+  require_validated_dataset: true
+  allow_untrusted_checkpoints: false
+
+# ============================================================
+# Notifications
+# ============================================================
+
+notifications:
+  enabled: false
+
+  on_training_started: true
+  on_training_completed: true
+  on_training_failed: true
+  on_early_stopping: true
+
+  channels:
+    console: true
+    email: false
+    webhook: false

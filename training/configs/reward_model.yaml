@@ -1,0 +1,69 @@
+
+# NeuroWorld AI - Reward Model Training
+# File: training/configs/reward_model.yaml
+
+experiment:
+  name: "reward_model_training"
+  seed: 42
+
+model:
+  name: "NeuroWorldRewardModel"
+  state_dim: 128
+  action_dim: 32
+  hidden_dim: 256
+  num_layers: 3
+  dropout: 0.1
+  activation: "relu"
+  output_dim: 1
+
+dataset:
+  path: "data/processed/trajectories.npz"
+  num_workers: 0
+  shuffle: true
+
+training:
+  epochs: 50
+  batch_size: 32
+  device: "auto"
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+loss:
+  name: "mse"
+  reduction: "mean"
+
+reward:
+  prediction_type: "scalar"
+  normalize_rewards: true
+  clip_rewards: false
+  discount_factor: 0.99
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+  mode: "min"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/reward_model"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/reward_model"
+
+distributed:
+  enabled: false

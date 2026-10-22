@@ -1,0 +1,85 @@
+
+# NeuroWorld AI - Policy Training Configuration
+# File: training/configs/policy.yaml
+
+experiment:
+  name: "policy_training"
+  seed: 42
+
+model:
+  name: "NeuroWorldPolicy"
+  state_dim: 128
+  action_dim: 32
+  hidden_dim: 256
+  num_layers: 3
+  activation: "relu"
+
+policy:
+  type: "actor_critic"
+  action_space: "continuous"
+  stochastic: true
+  action_min: -1.0
+  action_max: 1.0
+
+dataset:
+  path: "data/processed/trajectories.npz"
+  sequence_length: 16
+  num_workers: 0
+  shuffle: true
+
+training:
+  epochs: 100
+  batch_size: 32
+  device: "auto"
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+reinforcement_learning:
+  algorithm: "ppo"
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_epsilon: 0.2
+  entropy_coefficient: 0.01
+  value_loss_coefficient: 0.5
+  max_grad_norm: 1.0
+  update_epochs: 4
+
+world_model:
+  enabled: true
+  checkpoint_path: "checkpoints/world_model/neuroworld_best.pt"
+  freeze_parameters: true
+
+loss:
+  policy_weight: 1.0
+  value_weight: 0.5
+  entropy_weight: 0.01
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+  mode: "min"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/policy"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/policy"
+
+distributed:
+  enabled: false

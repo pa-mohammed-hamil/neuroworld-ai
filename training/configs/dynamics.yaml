@@ -1,0 +1,56 @@
+
+# NeuroWorld AI - Dynamics Model Training
+# File: training/configs/dynamics.yaml
+
+experiment:
+  name: "dynamics_training"
+  seed: 42
+
+model:
+  name: "DynamicsMLP"
+  state_dim: 128
+  action_dim: 32
+  hidden_dim: 256
+
+dataset:
+  path: "data/processed/transitions.npz"
+  sequence_length: 16
+  num_workers: 0
+
+training:
+  epochs: 50
+  batch_size: 32
+  device: "auto"
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+loss:
+  name: "mse"
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/dynamics"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/dynamics"
+
+distributed:
+  enabled: false

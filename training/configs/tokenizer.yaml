@@ -1,0 +1,70 @@
+
+# NeuroWorld AI - Tokenizer Training Configuration
+# File: training/configs/tokenizer.yaml
+
+experiment:
+  name: "tokenizer_training"
+  seed: 42
+
+model:
+  name: "NeuroWorldTokenizer"
+  type: "vqvae"
+
+  image_channels: 3
+  image_size: 128
+
+  latent_dim: 128
+  hidden_dim: 256
+
+  codebook_size: 1024
+  commitment_weight: 0.25
+
+dataset:
+  path: "data/processed/videos"
+  image_size: 128
+  num_workers: 0
+  shuffle: true
+
+training:
+  epochs: 100
+  batch_size: 16
+  device: "auto"
+  mixed_precision: false
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+loss:
+  reconstruction_weight: 1.0
+  codebook_weight: 1.0
+  commitment_weight: 0.25
+  reconstruction_type: "mse"
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+  mode: "min"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/tokenizer"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/tokenizer"
+
+distributed:
+  enabled: false

@@ -1,0 +1,79 @@
+
+# NeuroWorld AI - World Model Training
+# File: training/configs/world_model.yaml
+
+experiment:
+  name: "world_model_training"
+  seed: 42
+
+model:
+  name: "NeuroWorldModel"
+  type: "stochastic_transformer"
+
+  state_dim: 128
+  action_dim: 32
+  latent_dim: 128
+  hidden_dim: 256
+
+  num_layers: 4
+  num_attention_heads: 8
+  dropout: 0.1
+
+  stochastic: true
+  predict_next_state: true
+
+  dynamics:
+    backend: "stochastic"
+    distribution: "gaussian"
+    min_logvar: -10.0
+    max_logvar: 5.0
+
+dataset:
+  path: "data/processed/trajectories.npz"
+  sequence_length: 16
+  num_workers: 0
+  shuffle: true
+
+training:
+  epochs: 100
+  batch_size: 32
+  device: "auto"
+  mixed_precision: false
+  gradient_accumulation_steps: 1
+
+optimizer:
+  name: "adamw"
+  learning_rate: 0.0003
+  weight_decay: 0.01
+
+scheduler:
+  name: "cosine"
+  enabled: true
+
+loss:
+  prediction_weight: 1.0
+  dynamics_weight: 1.0
+  kl_weight: 0.001
+  consistency_weight: 0.1
+
+validation:
+  enabled: true
+  monitor: "val_loss"
+  mode: "min"
+
+early_stopping:
+  enabled: true
+  patience: 10
+  min_delta: 0.0001
+
+checkpoint:
+  directory: "checkpoints/world_model"
+  save_best: true
+  save_last: true
+
+logging:
+  enabled: true
+  log_dir: "logs/world_model"
+
+distributed:
+  enabled: false
